@@ -10,16 +10,20 @@ export default function SandboxGuard({
   children: React.ReactNode;
 }) {
   const [isSandboxed, setIsSandboxed] = useState(false);
+
   useEffect(() => {
     const inIframe = window.self !== window.top;
     if (!inIframe) return;
 
-    const popup = window.open("", "_blank", "width=1,height=1");
-    if (popup === null) {
-      setIsSandboxed(true);
-    } else {
-      popup.close();
-    }
+    const script = document.createElement("script");
+    script.src = "/scripts/ads.js";
+    script.onload = () => {
+      // loaded fine, no sandbox issue
+    };
+    script.onerror = () => {
+      setIsSandboxed(true); // blocked by sandbox or adblocker
+    };
+    document.head.appendChild(script);
   }, []);
 
   if (isSandboxed) {
