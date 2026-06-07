@@ -10,19 +10,14 @@ export default function SandboxGuard({
   children: React.ReactNode;
 }) {
   const [isSandboxed, setIsSandboxed] = useState(false);
-
   useEffect(() => {
     const inIframe = window.self !== window.top;
     if (!inIframe) return;
 
-    try {
-      localStorage.setItem("__sb__", "1");
-      localStorage.removeItem("__sb__");
-    } catch (e) {
-      if (e instanceof DOMException && e.name === "SecurityError") {
-        setIsSandboxed(true);
-      }
-    }
+    const script = document.createElement("script");
+    script.src = "https://cdn.zxcstream.xyz/scripts/ab.js"; // your own test script
+    script.onerror = () => setIsSandboxed(true); // blocked = sandboxed
+    document.head.appendChild(script);
   }, []);
 
   if (isSandboxed) {
