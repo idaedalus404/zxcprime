@@ -193,14 +193,14 @@ export async function GET(req: NextRequest) {
 
     let step2Data: any = null;
 
-    for (let attempt = 0; attempt < 10; attempt++) {
+    for (let attempt = 0; attempt < 15; attempt++) {
       const step2Url = `https://holly-2.${randomWorker()}.workers.dev/?embed_url=${encodeURIComponent(embedUrl)}`;
-      const res = await fetchWithTimeout(step2Url, {}, 6000).catch(() => null);
+      const res = await fetchWithTimeout(step2Url, {}, 15000).catch(() => null);
       if (res?.ok) {
         step2Data = await res.json();
         break;
       }
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 1000));
     }
 
     if (!step2Data) {
