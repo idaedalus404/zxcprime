@@ -142,9 +142,25 @@ export function useVideoPlayer({
       hls.attachMedia(video);
 
       hlsRef.current = hls;
+      // hls.on(Hls.Events.ERROR, (_, data) => {
+      //   if (data.fatal) {
+      //     handleServerFail();
+      //   }
+      // });
       hls.on(Hls.Events.ERROR, (_, data) => {
         if (data.fatal) {
-          handleServerFail();
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              hls.startLoad(); // try to recover
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              hls.recoverMediaError(); // try to recover
+              break;
+            default:
+              hls.destroy(); // unrecoverable — destroy first
+              handleServerFail();
+              break;
+          }
         }
       });
       hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
