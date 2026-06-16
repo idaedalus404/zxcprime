@@ -184,8 +184,8 @@ export async function GET(req: NextRequest) {
         );
       }
 
-      console.log(title, date);
-      console.log(items);
+      // console.log(title, date);
+      // console.log(items);
       const normalizedTitle = title?.toLowerCase().trim().replace(/-/g, " ");
       const LANG_TAGS =
         /\[(tagalog|hindi|dubbed|multi|spanish|french|arabic|korean|japanese|tamil|telugu)\]/i;
