@@ -585,7 +585,7 @@ export default function Player() {
           <ArrowLeftIcon className="absolute lg:top-4 top-3 lg:left-6 left-2 lg:size-13  md:size-10 size-8  landscape:size-5.5 text-muted-foreground z-30" />
         </button>
       )}
-      {state.playing && (
+      {state.playing && state.canPlay && (
         <SkipSegment
           className="absolute  lg:bottom-32  lg:right-7 md:bottom-23 md:right-5 bottom-27 right-3 z-30 landscape:bottom-20"
           currentTime={state.currentTime}
