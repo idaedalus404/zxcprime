@@ -464,7 +464,8 @@ export async function GET(req: NextRequest) {
     }
 
     const proxies = [
-      "https://proxy.test4-eb0.workers.dev/",
+      "http://localhost:3000/backend_/servers/icarus/proxy/",
+      "https://z.zxcstream.xyz/backend_/servers/icarus/proxy/",
       // "https://proxy.test3-ed1.workers.dev/",
       // "https://proxy.test2-425.workers.dev/",
       // "https://proxy.test1-845.workers.dev/",
