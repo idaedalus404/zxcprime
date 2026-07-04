@@ -8,6 +8,7 @@ export type TmdbDetailsResponse = {
   status: string;
   country: string | null;
   original_language: string;
+  tagline: string | null;
   genres: Genre[];
   imdb_id: string | null;
   seasons: SeasonsType[];

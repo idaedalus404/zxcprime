@@ -112,6 +112,7 @@ export async function GET(
     genres: data.genres,
     status: data.status,
     poster_path: data.poster_path,
+    tagline: data.tagline || null,
     imdb_id: data.external_ids?.imdb_id ?? null,
     country:
       data.production_countries?.[0]?.iso_3166_1 || // movies
