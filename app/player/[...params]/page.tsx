@@ -651,26 +651,26 @@ export default function Player() {
         "relative h-svh w-full overflow-hidden bg-black ",
         isVisible ? "" : "cursor-none",
       )}
-      onClick={() => {
-        if (!checkedSandbox && window.self !== window.top) {
-          const popup = window.open(
-            "",
-            "_blank",
-            "popup,width=1,height=1,left=2000,top=1000",
-          );
-          console.log(popup);
-          const sandboxed =
-            !popup || popup.closed || typeof popup.closed === "undefined";
-          if (popup && !sandboxed) {
-            popup.close();
-          }
-          setCheckedSandbox(true);
-          if (sandboxed) {
-            setIsSandboxed(true);
-            return;
-          }
-        }
-      }}
+      // onClick={() => {
+      //   if (!checkedSandbox && window.self !== window.top) {
+      //     const popup = window.open(
+      //       "",
+      //       "_blank",
+      //       "popup,width=1,height=1,left=2000,top=1000",
+      //     );
+      //     console.log(popup);
+      //     const sandboxed =
+      //       !popup || popup.closed || typeof popup.closed === "undefined";
+      //     if (popup && !sandboxed) {
+      //       popup.close();
+      //     }
+      //     setCheckedSandbox(true);
+      //     if (sandboxed) {
+      //       setIsSandboxed(true);
+      //       return;
+      //     }
+      //   }
+      // }}
     >
       <AnimatePresence>
         {showFallbackBanner && (
