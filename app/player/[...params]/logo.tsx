@@ -8,7 +8,7 @@ export default function LoadingMetadata({ logo }: { logo: string }) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
       className="
-fixed inset-0 overflow-hidden pointer-events-none z-30
+fixed inset-0 overflow-hidden pointer-events-none
 bg-radial from-transparent via-transparent to-black
 before:content-['']
 before:absolute before:inset-0
