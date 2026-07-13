@@ -165,12 +165,14 @@ export default function MainControls({
         className={cn(
           "lg:p-4 p-3  landscape:p-2",
           "flex justify-between items-center",
-          "pointer-events-auto ",
           "z-30",
         )}
       >
         {back ? (
-          <button onClick={() => router.back()} className="cursor-pointer">
+          <button
+            onClick={() => router.back()}
+            className="cursor-pointer pointer-events-auto"
+          >
             <ArrowLeftIcon
               className={cn(
                 "lg:size-13 md:size-10 size-10 landscape:size-7",
@@ -194,7 +196,7 @@ export default function MainControls({
         </div>
         <button
           onClick={() => setShowServer((prev) => !prev)}
-          className="cursor-pointer"
+          className="cursor-pointer pointer-events-auto"
         >
           <Layers2
             strokeWidth={3}
@@ -210,7 +212,7 @@ export default function MainControls({
           "w-full ",
           "lg:p-4 p-3 landscape:p-2",
           "lg:py-6 py-3",
-          "space-y-3",
+          "space-y-3 ",
           "z-30",
         )}
       >
@@ -265,7 +267,7 @@ export default function MainControls({
         >
           <div
             className={cn(
-              "space-y-2 landscape:space-y-0.5",
+              "space-y-2 landscape:space-y-1",
               "md:px-2 lg:px-3 landscape:px-2",
             )}
           >
@@ -282,46 +284,17 @@ export default function MainControls({
                 onMouseMove={handleSliderHover}
                 onMouseLeave={clearHover}
               >
-                {/* Buffered bar */}
-                <div className="absolute inset-0 rounded pointer-events-none">
-                  <div
-                    className="h-full bg-muted-foreground/50 rounded"
-                    style={{
-                      width: state.duration
-                        ? `${(state.buffered / state.duration) * 100}%`
-                        : "0%",
-                    }}
-                  />
-                </div>
-
-                {hoverTime !== null && (
-                  <div
-                    className={cn(
-                      "absolute -top-8",
-                      "px-2 py-1",
-                      "text-sm rounded",
-                      "bg-background/70 backdrop-blur-2xl",
-                      "text-foreground",
-                      "pointer-events-none z-40",
-                    )}
-                    style={{
-                      left: hoverX,
-                      transform: "translateX(-50%)",
-                    }}
-                  >
-                    {formatTime(hoverTime)}
-                  </div>
-                )}
                 <Slider
                   value={[state.currentTime]}
                   max={state.duration || 1}
                   step={0.1}
+                  buffered={state.buffered}
                   onValueChange={(value) => controls.handleSeekChange(value)}
                   onValueCommit={(value) => controls.handleSeekCommit(value)}
-                  className="relative z-10"
                   color={color}
                   intro={introData?.intro}
                   outro={introData?.outro}
+                  showTooltip={true}
                 />
               </div>
             </div>

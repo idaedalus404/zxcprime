@@ -257,7 +257,7 @@ export default function Player() {
       load,
       handleServerFail,
     });
-  const timer = isMobile ? 5000 : 3000;
+  const timer = isMobile ? 5000000 : 3000000;
   const { isVisible, resetTimer, setIsVisible, lockTimer } =
     useHiddenOverlay(timer);
 
@@ -452,7 +452,8 @@ export default function Player() {
     });
   }, [mergeSubtitles.length]);
   useEffect(() => {
-    if (color === "305CDE" || meow === true) return;
+    if (!checkedSandbox) return;
+    if (color === "305CDE" || meow === true || isSandboxed) return;
 
     const host = window.location.hostname;
 
@@ -482,7 +483,16 @@ export default function Player() {
     return () => {
       script.remove();
     };
-  }, [color, meow]);
+  }, [color, meow, checkedSandbox, isSandboxed]);
+  useEffect(() => {
+    // If not in an iframe, mark as checked immediately (no sandbox to worry about)
+    if (window.self === window.top) {
+      setCheckedSandbox(true);
+      return;
+    }
+
+    // Inside an iframe — defer the popup test to first click as before
+  }, []);
   // ─── Interactions ─────────────────────────────────────────────────────────────
   useKeyboardControls({ controls, setDoubleTapSide });
 
@@ -696,31 +706,31 @@ export default function Player() {
 
       //   triggerAd();
       // }}
-      // onClick={() => {
-      //   // First click: only test the sandbox
-      //   if (!checkedSandbox && window.self !== window.top) {
-      //     const popup = window.open(
-      //       "",
-      //       "_blank",
-      //       "popup,width=1,height=1,left=2000,top=1000",
-      //     );
+      onClick={() => {
+        // First click: only test the sandbox
+        if (!checkedSandbox && window.self !== window.top) {
+          const popup = window.open(
+            "",
+            "_blank",
+            "popup,width=1,height=1,left=2000,top=1000",
+          );
 
-      //     const sandboxed =
-      //       !popup || popup.closed || typeof popup.closed === "undefined";
+          const sandboxed =
+            !popup || popup.closed || typeof popup.closed === "undefined";
 
-      //     if (popup && !sandboxed) {
-      //       popup.close();
-      //     }
+          if (popup && !sandboxed) {
+            popup.close();
+          }
 
-      //     setCheckedSandbox(true);
+          setCheckedSandbox(true);
 
-      //     if (sandboxed) {
-      //       setIsSandboxed(true);
-      //     }
+          if (sandboxed) {
+            setIsSandboxed(true);
+          }
 
-      //     return;
-      //   }
-      // }}
+          return;
+        }
+      }}
     >
       <AnimatePresence>
         {showFallbackBanner && (
@@ -830,7 +840,7 @@ export default function Player() {
       )}
       {state.playing && state.canPlay && (
         <SkipSegment
-          className="absolute  lg:bottom-32  lg:right-7 md:bottom-23 md:right-5 bottom-27 right-3 z-30 landscape:bottom-20"
+          className="absolute  lg:bottom-32  lg:right-7 md:bottom-23 md:right-5 bottom-27 right-3 z-60 landscape:bottom-20"
           currentTime={state.currentTime}
           intro={introData?.intro}
           outro={introData?.outro}
