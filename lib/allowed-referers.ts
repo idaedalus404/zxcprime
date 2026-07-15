@@ -18,6 +18,15 @@ const ALLOWED_REFERERS = [
   "https://v1.zxcstream.xyz/",
   "https://v2.zxcstream.xyz/",
   "https://v3.zxcstream.xyz/",
+  "https://v4.zxcstream.xyz/",
+  "https://v5.zxcstream.xyz/",
+  "https://v6.zxcstream.xyz/",
+  "https://r1.zxcstream.xyz/",
+  "https://r2.zxcstream.xyz/",
+  "https://r3.zxcstream.xyz/",
+  "https://r4.zxcstream.xyz/",
+  "https://r5.zxcstream.xyz/",
+  "https://r6.zxcstream.xyz/",
 ];
 
 export const ALLOWED_ORIGINS = [
@@ -40,6 +49,15 @@ export const ALLOWED_ORIGINS = [
   "https://v1.zxcstream.xyz",
   "https://v2.zxcstream.xyz",
   "https://v3.zxcstream.xyz",
+  "https://v4.zxcstream.xyz",
+  "https://v5.zxcstream.xyz",
+  "https://v6.zxcstream.xyz",
+  "https://r1.zxcstream.xyz",
+  "https://r2.zxcstream.xyz",
+  "https://r3.zxcstream.xyz",
+  "https://r4.zxcstream.xyz",
+  "https://r5.zxcstream.xyz",
+  "https://r6.zxcstream.xyz",
 ];
 export function isValidReferer(referer: string): boolean {
   return ALLOWED_REFERERS.some((allowed) => referer.includes(allowed));
