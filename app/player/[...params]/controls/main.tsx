@@ -34,7 +34,23 @@ import {
 import { IntroTypesResponse } from "@/hooks/intro";
 import { EpisodesIcon } from "@/components/icons/episodes";
 export interface VideoControlsProps {
-  state: VideoPlayerState;
+  currentTime: number;
+  duration: number;
+  buffered: number;
+
+  playback: {
+    playing: boolean;
+    waiting: boolean;
+    ended: boolean;
+    canPlay: boolean;
+  };
+
+  ui: {
+    volume: number;
+    muted: boolean;
+    fullscreen: boolean;
+    pip: boolean;
+  };
   controls: VideoPlayerControls;
   playerSrc: string | null;
   tmdbId: string;
@@ -42,7 +58,6 @@ export interface VideoControlsProps {
   season: number;
   episode: number;
   media_type: string;
-  currentTime: number;
   skipBy: (skip: number) => void;
   year: string;
   genre: string;
@@ -83,7 +98,11 @@ export interface VideoControlsProps {
   introData: IntroTypesResponse | undefined;
 }
 export default function MainControls({
-  state,
+  currentTime,
+  duration,
+  buffered,
+  playback,
+  ui,
   controls,
   playerSrc,
   tmdbId,
@@ -91,7 +110,6 @@ export default function MainControls({
   season,
   episode,
   media_type,
-  currentTime,
   skipBy,
   year,
   genre,
@@ -137,14 +155,15 @@ export default function MainControls({
   const [hoverX, setHoverX] = useState(0);
   const [open, setOpen] = useState(false);
   const [selectSeason, setSeasonSelect] = useState(season);
+  console.log("meow");
   const handleSliderHover = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!sliderRef.current || !state.duration) return;
+    if (!sliderRef.current || !duration) return;
 
     const rect = sliderRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
 
     const percent = Math.min(Math.max(x / rect.width, 0), 1);
-    const time = percent * state.duration;
+    const time = percent * duration;
 
     setHoverX(x);
     setHoverTime(time);
@@ -321,10 +340,10 @@ export default function MainControls({
                 onMouseLeave={clearHover}
               >
                 <Slider
-                  value={[state.currentTime]}
-                  max={state.duration || 1}
+                  value={[currentTime]}
+                  max={duration || 1}
                   step={0.1}
-                  buffered={state.buffered}
+                  buffered={buffered}
                   onValueChange={(value) => controls.handleSeekChange(value)}
                   onValueCommit={(value) => controls.handleSeekCommit(value)}
                   color={color}
@@ -341,8 +360,8 @@ export default function MainControls({
                 "text-sm landscape:text-xs",
               )}
             >
-              <span>{formatTime(state.currentTime)}</span>
-              <span>{formatTime(state.duration)}</span>
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(duration)}</span>
             </div>
           </div>
           <div
@@ -357,7 +376,7 @@ export default function MainControls({
                 onClick={controls.togglePlay}
                 className="text-white/80 hover:text-white cursor-pointer"
               >
-                {state.playing ? (
+                {playback.playing ? (
                   <motion.div
                     key="pause"
                     initial={{ opacity: 0, scale: 1.3 }}
@@ -393,7 +412,7 @@ export default function MainControls({
                   onClick={controls.toggleMute}
                   className="text-white/80 hover:text-white cursor-pointer"
                 >
-                  {state.muted || state.volume === 0 ? (
+                  {ui.muted || ui.volume === 0 ? (
                     <motion.div
                       key="muted"
                       initial={{ opacity: 0, scale: 1.3 }}
@@ -424,7 +443,7 @@ export default function MainControls({
                   )}
                 </button>
                 <Slider
-                  value={[state.muted ? 0 : state.volume]}
+                  value={[ui.muted ? 0 : ui.volume]}
                   min={0}
                   max={1}
                   step={0.02}
@@ -445,8 +464,8 @@ export default function MainControls({
                   "lg:text-base text-sm",
                 )}
               >
-                <span>{formatTime(state.currentTime)}</span>/
-                <span>{formatTime(state.duration)}</span>
+                <span>{formatTime(currentTime)}</span>/
+                <span>{formatTime(duration)}</span>
               </div>
 
               {media_type === "tv" && canNext && (
@@ -508,7 +527,7 @@ export default function MainControls({
                 onClick={controls.toggleFullscreen}
                 className="cursor-pointer text-white/80 hover:text-white"
               >
-                {state.fullscreen ? (
+                {ui.fullscreen ? (
                   <motion.div
                     key="minimize"
                     initial={{ opacity: 0, scale: 1.3 }}

@@ -87,12 +87,12 @@ export default function useSource(
     refetchOnReconnect: false,
     refetchIntervalInBackground: false,
     queryFn: async () => {
-      console.log("🚀 queryFn fired with:", {
-        dubCode,
-        dubType,
-        server,
-        tmdbId,
-      });
+      // console.log("🚀 queryFn fired with:", {
+      //   dubCode,
+      //   dubType,
+      //   server,
+      //   tmdbId,
+      // });
       // if (server === "thanatos") {
       //   return fetchThanatosSource({
       //     media_type,

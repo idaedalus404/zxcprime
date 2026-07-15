@@ -58,7 +58,9 @@ export default function Episodes({
           data?.episodes.findIndex((e) => e.episode_number === episode) ?? 0,
         )
       : 0;
-  console.log(selectSeason, season);
+  if (open) {
+    console.log("Episodes rendered →", { selectSeason, season });
+  }
   return (
     <AnimatePresence>
       {open && (

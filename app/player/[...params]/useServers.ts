@@ -1,6 +1,6 @@
 import { initialServers } from "@/lib/server-list";
 import { ServerTypes } from "@/types/player-types";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export function usePlayerServers({
   defaultServerIndex,
@@ -36,7 +36,7 @@ export function usePlayerServers({
     setServerIndex(i);
   }
 
-  function handleServerFail() {
+  const handleServerFail = useCallback(() => {
     setServers((prev) => {
       const find = (status: string) =>
         prev.findIndex((s, i) => i !== serverIndex && s.status === status);
@@ -61,24 +61,26 @@ export function usePlayerServers({
         i === serverIndex ? { ...s, status: "failed" } : s,
       );
     });
-  }
-  function handleCanPlay() {
+  }, [serverIndex]);
+
+  const handleCanPlay = useCallback(() => {
     setServers((prev) =>
       prev.map((s, i) =>
         i === serverIndex ? { ...s, status: "available" } : s,
       ),
     );
     setPlayingIndex(serverIndex);
-  }
+  }, [serverIndex]);
 
-  function handleMarkConnecting() {
+  const handleMarkConnecting = useCallback(() => {
     setServers((prev) =>
       prev.map((s, i) =>
         i === serverIndex ? { ...s, status: "connecting" } : s,
       ),
     );
-  }
-  function handleMarkChecking() {
+  }, [serverIndex]);
+
+  const handleMarkChecking = useCallback(() => {
     setServers((prev) =>
       prev.map((s, i) =>
         i === serverIndex && s.status === "queue"
@@ -86,9 +88,9 @@ export function usePlayerServers({
           : s,
       ),
     );
-  }
+  }, [serverIndex]);
 
-  function handleMarkDub() {
+  const handleMarkDub = useCallback(() => {
     setServers((prev) =>
       prev.map((s, i) =>
         i === serverIndex && s.status === "available"
@@ -96,10 +98,10 @@ export function usePlayerServers({
           : s,
       ),
     );
-
     setPlayingIndex(null);
-  }
-  function handleMarkQueue() {
+  }, [serverIndex]);
+
+  const handleMarkQueue = useCallback(() => {
     setServers((prev) =>
       prev.map((s, i) =>
         i === serverIndex && s.status === "checking"
@@ -107,22 +109,21 @@ export function usePlayerServers({
           : s,
       ),
     );
-  }
-
-  function handleQualityChange() {
+  }, [serverIndex]);
+  const handleQualityChange = useCallback(() => {
     setServers((prev) =>
       prev.map((s, i) =>
         i === serverIndex ? { ...s, status: "connecting" } : s,
       ),
     );
-    setPlayingIndex(null); // 👈 also clear playingIndex so it's not "Connected"
-  }
-  function handleResetServers() {
+    setPlayingIndex(null);
+  }, [serverIndex]);
+  const handleResetServers = useCallback(() => {
     setAllFailed(false);
     setPlayingIndex(null);
     setServerIndex(0);
     setServers(initialServers);
-  }
+  }, []);
   return {
     handleCanPlay,
     handleManualSelect,

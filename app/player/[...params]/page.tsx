@@ -245,18 +245,33 @@ export default function Player() {
 
   const srcType = source?.links?.[Number(isAuto)]?.type ?? "";
   // console.log(isAuto, playerSrc, srcType);
-  const { videoRef, containerRef, state, controls, quality, audioTracks } =
-    useVideoPlayer({
-      playerSrc,
-      srcType,
-      serverIndex,
-      progressKey: makeKey(media_type, tmdbId, season, episode),
-      initialMuted: auto_play && autoplay === "on",
-      enableSaveProgress,
-      enableLoadProgress,
-      load,
-      handleServerFail,
-    });
+
+  const {
+    videoRef,
+    containerRef,
+    // New return values
+    currentTime,
+    duration,
+    buffered,
+    playback,
+    ui,
+    controls,
+    quality,
+    setQuality,
+    audioTracks,
+    setAudioTracks,
+  } = useVideoPlayer({
+    playerSrc,
+    srcType,
+    serverIndex,
+    progressKey: makeKey(media_type, tmdbId, season, episode),
+    initialMuted: auto_play && autoplay === "on",
+    enableSaveProgress,
+    enableLoadProgress,
+    load,
+    handleServerFail,
+  });
+
   const timer = isMobile ? 5000 : 3000;
   const { isVisible, resetTimer, setIsVisible, lockTimer } =
     useHiddenOverlay(timer);
@@ -325,15 +340,15 @@ export default function Player() {
 
   useEffect(() => {
     if (!source?.fallback) return;
-    if (!state.canPlay) return;
+    if (!playback.canPlay) return;
     if (fetchServer.server !== "icarus") return;
     setShowFallbackBanner(true);
     const timer = setTimeout(() => setShowFallbackBanner(false), 5000);
     return () => clearTimeout(timer);
-  }, [source?.fallback, state.canPlay]);
+  }, [source?.fallback, playback.canPlay]);
 
   useEffect(() => {
-    if (!state.canPlay) return;
+    if (!playback.canPlay) return;
     if (fetchServer.server !== "icarus") return;
     if (playCountCalled.current) return;
     if (!source?.active) return;
@@ -352,7 +367,7 @@ export default function Player() {
         type: source.active.langType,
       }),
     });
-  }, [state.canPlay, source?.active]);
+  }, [playback.canPlay, source?.active]);
 
   // useEffect(() => {
   //   dubLangApplied.current = false;
@@ -367,14 +382,14 @@ export default function Player() {
   // }, [serverIndex]);
   // useEffect(() => {
   //   if (backdropArray.length <= 1) return;
-  //   if (state.canPlay) return; // stop cycling once video is playing
+  //   if (playback.canPlay) return; // stop cycling once video is playing
 
   //   const interval = setInterval(() => {
   //     setBackdropIndex((prev) => (prev + 1) % backdropArray.length);
   //   }, 3000);
 
   //   return () => clearInterval(interval);
-  // }, [backdropArray.length, state.canPlay]);
+  // }, [backdropArray.length, playback.canPlay]);
   // dubLang effect
   useEffect(() => {
     if (!dubLang) return;
@@ -423,10 +438,10 @@ export default function Player() {
   }, [playerSrc]);
 
   useEffect(() => {
-    if (canNext && state.ended) {
+    if (canNext && playback.ended) {
       router.push(`/player/tv/${tmdbId}/${nextSeason}/${nextEpisode}`);
     }
-  }, [state.ended]);
+  }, [playback.ended]);
 
   // console.log("sds", servers[serverIndex].status);
 
@@ -497,14 +512,14 @@ export default function Player() {
   useKeyboardControls({ controls, setDoubleTapSide });
 
   useEffect(() => {
-    if (state.canPlay) {
+    if (playback.canPlay) {
       setShowServer(false);
       resetTimer();
     } else {
       setShowServer(true);
       lockTimer();
     }
-  }, [state.canPlay]);
+  }, [playback.canPlay]);
 
   const handleDoubleTap = useDoubleTap(
     (e) => {
@@ -527,7 +542,13 @@ export default function Player() {
       },
     },
   );
-
+  // useEffect(() => {
+  //   console.log("Player component rendered", {
+  //     currentTime: currentTime,
+  //     canPlay: playback.canPlay,
+  //     playing: playback.playing,
+  //   });
+  // }, []);
   // ─── Error State ──────────────────────────────────────────────────────────────
   if (metadataError) {
     return (
@@ -565,7 +586,7 @@ export default function Player() {
           "h-screen flex flex-col justify-center items-center gap-6 bg-background relative overflow-hidden",
         )}
       >
-        {back && !state.canPlay && (
+        {back && !playback.canPlay && (
           <button onClick={() => router.back()} className="cursor-pointer">
             <ArrowLeftIcon className="absolute lg:top-4 top-3 lg:left-6 left-2 lg:size-13  md:size-10 size-8  landscape:size-5.5 text-muted-foreground z-30" />
           </button>
@@ -607,7 +628,7 @@ export default function Player() {
           "h-screen flex flex-col justify-center items-center gap-6 bg-background relative overflow-hidden",
         )}
       >
-        {back && !state.canPlay && (
+        {back && !playback.canPlay && (
           <button onClick={() => router.back()} className="cursor-pointer">
             <ArrowLeftIcon className="absolute lg:top-4 top-3 lg:left-6 left-2 lg:size-13  md:size-10 size-8  landscape:size-5.5 text-muted-foreground z-30" />
           </button>
@@ -810,7 +831,7 @@ export default function Player() {
 
       {/* Backdrop (shown while buffering) */}
       <AnimatePresence mode="wait">
-        {!state.canPlay && backdrop && (
+        {!playback.canPlay && backdrop && (
           <motion.img
             key={backdrop}
             src={`https://image.tmdb.org/t/p/original/${backdrop}`}
@@ -833,15 +854,15 @@ export default function Player() {
           />
         )}
       </AnimatePresence>
-      {back && !state.canPlay && (
+      {back && !playback.canPlay && (
         <button onClick={() => router.back()} className="cursor-pointer">
           <ArrowLeftIcon className="absolute lg:top-4 top-3 lg:left-6 left-2 lg:size-13  md:size-10 size-8  landscape:size-5.5 text-muted-foreground z-30" />
         </button>
       )}
-      {state.playing && state.canPlay && (
+      {playback.playing && playback.canPlay && (
         <SkipSegment
           className="absolute  lg:bottom-32  lg:right-7 md:bottom-23 md:right-5 bottom-27 right-3 z-60 landscape:bottom-20"
-          currentTime={state.currentTime}
+          currentTime={currentTime}
           intro={introData?.intro}
           outro={introData?.outro}
           onSkip={controls.skipTo}
@@ -849,19 +870,21 @@ export default function Player() {
       )}
 
       {/* Loading tip */}
-      {!state.canPlay && <DynamicTip />}
+      {!playback.canPlay && <DynamicTip />}
 
       {/* Pause overlay */}
       <AnimatePresence>
-        {metadata && !state.playing && !isVisible && state.canPlay && (
+        {metadata && !playback.playing && !isVisible && playback.canPlay && (
           <Pause metadata={metadata} color={color} />
         )}
       </AnimatePresence>
 
-      {logo && !isMobile && !state.canPlay && <LoadingMetadata logo={logo} />}
+      {logo && !isMobile && !playback.canPlay && (
+        <LoadingMetadata logo={logo} />
+      )}
       {/* Double tap indicator */}
       <AnimatePresence>
-        {doubleTapSide && state.canPlay && (
+        {doubleTapSide && playback.canPlay && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -882,7 +905,7 @@ export default function Player() {
       <div
         className={cn(
           "absolute -translate-y-1/2 top-1/2 -translate-x-1/2 left-1/2 z-30 transition-opacity duration-300",
-          state.waiting && state.canPlay
+          playback.waiting && playback.canPlay
             ? "opacity-100"
             : "opacity-0 pointer-events-none",
         )}
@@ -891,17 +914,17 @@ export default function Player() {
       </div>
 
       {/* Subtitles */}
-      {cCToggle && state.canPlay && state.playing && (
+      {cCToggle && playback.canPlay && playback.playing && (
         <>
           <SubtitleOverlay
             subtitleUrl={subtitleUrl}
-            currentTime={state.currentTime}
+            currentTime={currentTime}
             isVisible={isVisible}
             domain={domain}
           />
           <SubtitleOverlay
             subtitleUrl={dualSubtitleUrl}
-            currentTime={state.currentTime}
+            currentTime={currentTime}
             position="top"
             isVisible={isVisible}
             domain={domain}
@@ -910,7 +933,7 @@ export default function Player() {
       )}
 
       {/* Touch / pointer interaction layer */}
-      {state.canPlay && (
+      {playback.canPlay && (
         <div
           className="absolute inset-0"
           onPointerMove={resetTimer}
@@ -920,7 +943,7 @@ export default function Player() {
 
       {/* Server picker */}
       <AnimatePresence>
-        {(isVisible || !state.canPlay) && showServer && (
+        {(isVisible || !playback.canPlay) && showServer && (
           <LyricsServerPicker
             servers={servers}
             playingIndex={playingIndex}
@@ -933,9 +956,13 @@ export default function Player() {
 
       {/* Main controls */}
       <AnimatePresence>
-        {isVisible && playerSrc && state.canPlay && (
+        {isVisible && playerSrc && playback.canPlay && (
           <MainControls
-            state={state}
+            currentTime={currentTime}
+            duration={duration}
+            buffered={buffered}
+            playback={playback}
+            ui={ui}
             controls={controls}
             playerSrc={playerSrc}
             tmdbId={tmdbId}
@@ -943,7 +970,6 @@ export default function Player() {
             season={season}
             episode={episode}
             media_type={media_type}
-            currentTime={state.currentTime}
             skipBy={controls.skipBy}
             year={year}
             genre={genre}
