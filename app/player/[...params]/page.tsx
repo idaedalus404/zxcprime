@@ -69,7 +69,7 @@ export default function Player() {
   const trackedRef = useRef(false);
 
   const isPartner = document.referrer.includes("xullys.xyz");
-  const restrictedSites = ["streamex"];
+  const restrictedSites = ["streamex", "zxcstream"];
   const restricted = restrictedSites.some((site) =>
     document.referrer.includes(site),
   );
@@ -547,6 +547,8 @@ export default function Player() {
   );
   const utcHour = new Date().getUTCHours();
   const bypassSandbox = utcHour >= 8 && utcHour < 20;
+
+  console.log("restricted", restricted, "bypassSandbox", bypassSandbox);
   if (isLoading) {
     return null;
   }
