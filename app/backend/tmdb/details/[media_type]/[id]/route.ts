@@ -83,17 +83,26 @@ export async function GET(
   const langCode = language.split("-")[0];
 
   // 1. Check cache first
-  const { data: cached } = await supabase
-    .from("tmdb_details_cache")
-    .select("data")
-    .eq("tmdb_id", id)
-    .eq("media_type", media_type)
-    .eq("language", language)
-    .gt("expires_at", new Date().toISOString())
-    .maybeSingle();
+  try {
+    const { data: cached, error } = await supabase
+      .from("tmdb_details_cache")
+      .select("data")
+      .eq("tmdb_id", id)
+      .eq("media_type", media_type)
+      .eq("language", language)
+      .gt("expires_at", new Date().toISOString())
+      .maybeSingle();
 
-  if (cached) {
-    return NextResponse.json({ ...cached.data, cache: true });
+    if (error) {
+      throw error;
+    }
+
+    if (cached) {
+      return NextResponse.json({ ...cached.data, cache: true });
+    }
+  } catch (err) {
+    console.warn("Supabase cache read failed:", err);
+    // Continue to TMDB
   }
 
   // 2. Fetch fresh from TMDB
@@ -163,18 +172,27 @@ export async function GET(
         : [],
   };
 
-  // 3. Store in cache with 7-day expiry
-  await supabase.from("tmdb_details_cache").upsert(
-    {
-      tmdb_id: id,
-      media_type,
-      language,
-      data: filtered,
-      refreshed_at: new Date().toISOString(),
-      expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(), // 7 days
-    },
-    { onConflict: "tmdb_id,media_type,language" },
-  );
+  try {
+    const { error } = await supabase.from("tmdb_details_cache").upsert(
+      {
+        tmdb_id: id,
+        media_type,
+        language,
+        data: filtered,
+        refreshed_at: new Date().toISOString(),
+        expires_at: new Date(
+          Date.now() + 1000 * 60 * 60 * 24 * 7,
+        ).toISOString(),
+      },
+      { onConflict: "tmdb_id,media_type,language" },
+    );
+
+    if (error) {
+      throw error;
+    }
+  } catch (err) {
+    console.warn("Supabase cache write failed:", err);
+  }
 
   return NextResponse.json({ ...filtered, cache: false });
 }

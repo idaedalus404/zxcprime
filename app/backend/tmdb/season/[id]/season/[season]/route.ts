@@ -81,17 +81,25 @@ export async function GET(
     : "en-US";
 
   // 1. Check cache first
-  const { data: cached } = await supabase
-    .from("tmdb_season_cache")
-    .select("data")
-    .eq("tmdb_id", id)
-    .eq("season", season)
-    .eq("language", language)
-    .gt("expires_at", new Date().toISOString())
-    .maybeSingle();
+  try {
+    const { data: cached, error } = await supabase
+      .from("tmdb_season_cache")
+      .select("data")
+      .eq("tmdb_id", id)
+      .eq("season", season)
+      .eq("language", language)
+      .gt("expires_at", new Date().toISOString())
+      .maybeSingle();
 
-  if (cached) {
-    return NextResponse.json({ ...cached.data, cache: true });
+    if (error) {
+      throw error;
+    }
+
+    if (cached) {
+      return NextResponse.json({ ...cached.data, cache: true });
+    }
+  } catch (err) {
+    console.warn("Supabase season cache read failed:", err);
   }
 
   // 2. Fetch fresh from TMDB
@@ -130,17 +138,27 @@ export async function GET(
   };
 
   // 3. Store in cache with 7-day expiry
-  await supabase.from("tmdb_season_cache").upsert(
-    {
-      tmdb_id: id,
-      season,
-      language,
-      data: filtered,
-      refreshed_at: new Date().toISOString(),
-      expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
-    },
-    { onConflict: "tmdb_id,season,language" },
-  );
+  try {
+    const { error } = await supabase.from("tmdb_season_cache").upsert(
+      {
+        tmdb_id: id,
+        season,
+        language,
+        data: filtered,
+        refreshed_at: new Date().toISOString(),
+        expires_at: new Date(
+          Date.now() + 1000 * 60 * 60 * 24 * 7,
+        ).toISOString(),
+      },
+      { onConflict: "tmdb_id,season,language" },
+    );
+
+    if (error) {
+      throw error;
+    }
+  } catch (err) {
+    console.warn("Supabase season cache write failed:", err);
+  }
 
   return NextResponse.json({ ...filtered, cache: false });
 }
