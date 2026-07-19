@@ -174,6 +174,7 @@ export default function EmbeddersTable() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>#</TableHead>
             {columns.map((col) => (
               <TableHead key={col.key}>
                 <button
@@ -196,8 +197,9 @@ export default function EmbeddersTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sorted.map((e: Embedder) => (
+          {sorted.map((e: Embedder, i) => (
             <TableRow key={e.id}>
+              <TableCell>{i + 1}</TableCell>
               <TableCell>{e.embed}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
