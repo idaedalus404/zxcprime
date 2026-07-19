@@ -359,7 +359,7 @@ export default function Player() {
 
   useEffect(() => {
     if (trackedRef.current) return;
-    if (isLoading) return;
+    if (isLoading && isSandboxed) return;
     if (window.self === window.top) return;
 
     trackedRef.current = true;
