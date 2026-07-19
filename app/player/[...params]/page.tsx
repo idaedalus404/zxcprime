@@ -556,6 +556,16 @@ export default function Player() {
   );
   const utcHour = new Date().getUTCHours();
   const bypassSandbox = utcHour >= 8 && utcHour < 20;
+
+  console.log(
+    "restricted",
+    restricted,
+    "bypassSandbox",
+    bypassSandbox,
+    "isSandboxed",
+    isSandboxed,
+  );
+  console.log(restricted && bypassSandbox && isSandboxed);
   if (isLoading) {
     return null;
   }
