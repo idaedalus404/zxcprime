@@ -99,7 +99,7 @@ export async function GET(req: NextRequest) {
       `[ICARUS] ${tmdbId}/${mediaType}${extra} | ${status} | ${reason}`,
     );
   };
-  const origin = req.nextUrl.origin;
+  const origin = "https://v-zxc-stream-xyz.up.railway.app/";
 
   try {
     const tmdbId = req.nextUrl.searchParams.get(FIELD_MAP.id);
