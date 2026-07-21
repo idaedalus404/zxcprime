@@ -21,8 +21,9 @@ async function proxy(req: NextRequest) {
     const headers: HeadersInit = {
       "User-Agent":
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
-      Referer: "https://videodownloader.site/",
-      Origin: "https://videodownloader.site",
+      Referer:
+        "https://sflix.film/detail/agent-kim-reactivated-QewyZXuRTV5?id=4980307872828510072&scene=&page_from=home_Trending+Drama%F0%9F%94%A5&type=/movie/detail",
+      Origin: "https://sflix.film",
       Accept: "*/*",
       "Accept-Language": "en-US,en;q=0.7",
     };
