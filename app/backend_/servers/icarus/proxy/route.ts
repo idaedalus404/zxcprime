@@ -21,8 +21,8 @@ async function proxy(req: NextRequest) {
     const headers: HeadersInit = {
       "User-Agent":
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
-      Referer: "https://fmoviesunblocked.net/",
-      Origin: "https://fmoviesunblocked.net",
+      Referer: "https://videodownloader.site/",
+      Origin: "https://videodownloader.site",
       Accept: "*/*",
       "Accept-Language": "en-US,en;q=0.7",
     };
