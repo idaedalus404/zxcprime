@@ -289,7 +289,8 @@ export async function GET(req: NextRequest) {
         {
           headers: {
             ...headers,
-            Referer: `https://fmoviesunblocked.net/spa/videoPlayPage/movies/${selectedItem.detailPath}?id=${rawSubjectId}&type=/movie/detail`,
+            Referer: `
+https://sflix.film/spa/videoPlayPage/movies/${selectedItem.detailPath}?id=${rawSubjectId}&type=/movie/detail`,
             Origin: "https://fmoviesunblocked.net",
           },
         },
@@ -396,7 +397,8 @@ export async function GET(req: NextRequest) {
         {
           headers: {
             ...headers,
-            Referer: `https://fmoviesunblocked.net/spa/videoPlayPage/movies/${detailPath}?id=${subjectId}&type=/movie/detail`,
+            Referer: `
+https://sflix.film/spa/videoPlayPage/movies/${detailPath}?id=${subjectId}&type=/movie/detail`,
             Origin: "https://fmoviesunblocked.net",
           },
         },
@@ -430,12 +432,13 @@ export async function GET(req: NextRequest) {
         }
 
         const retryRes = await fetchWithTimeout(
-          `${baseUrl}/subject/download?${retryParams}`,
+          `https://sflix.film/wefeed-h5api-bff/subject/subject/download?${retryParams}`,
           {
             headers: {
               ...headers,
-              Referer: `https://fmoviesunblocked.net/spa/videoPlayPage/movies/${detailPath}?id=${subjectId}&type=/movie/detail`,
-              Origin: "https://fmoviesunblocked.net",
+              Referer: `
+https://sflix.film/spa/videoPlayPage/movies/${detailPath}?id=${subjectId}&type=/movie/detail&lang=en`,
+              Origin: "https://sflix.film",
             },
           },
           8000,
